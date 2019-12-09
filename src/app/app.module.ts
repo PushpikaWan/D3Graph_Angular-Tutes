@@ -7,13 +7,15 @@ import { Comp1RedDotComponent } from './comp1-red-dot/comp1-red-dot.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Comp2DynamicDrawItemComponent } from './comp2-dynamic-draw-item/comp2-dynamic-draw-item.component';
 import { Comp3DoughnutChartComponent } from './comp3-doughnut-chart/comp3-doughnut-chart.component';
+import { Comp4TimeSeriesLineChartComponent } from './comp4-time-series-line-chart/comp4-time-series-line-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     Comp1RedDotComponent,
     Comp2DynamicDrawItemComponent,
-    Comp3DoughnutChartComponent
+    Comp3DoughnutChartComponent,
+    Comp4TimeSeriesLineChartComponent
   ],
   imports: [
     BrowserModule,
