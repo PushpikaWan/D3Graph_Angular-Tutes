@@ -10,6 +10,7 @@ import { Comp3DoughnutChartComponent } from './comp3-doughnut-chart/comp3-doughn
 import { Comp4TimeSeriesLineChartComponent } from './comp4-time-series-line-chart/comp4-time-series-line-chart.component';
 import { HttpClientModule } from '@angular/common/http';
 import { Comp5ChartInteractionComponent } from './comp5-chart-interaction/comp5-chart-interaction.component';
+import { Comp6CanvasComponent } from './comp6-canvas/comp6-canvas.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { Comp5ChartInteractionComponent } from './comp5-chart-interaction/comp5-
     Comp2DynamicDrawItemComponent,
     Comp3DoughnutChartComponent,
     Comp4TimeSeriesLineChartComponent,
-    Comp5ChartInteractionComponent
+    Comp5ChartInteractionComponent,
+    Comp6CanvasComponent
   ],
   imports: [
     BrowserModule,
