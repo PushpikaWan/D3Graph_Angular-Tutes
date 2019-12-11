@@ -86,7 +86,9 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              { "glob": "package.json", "input": "../", "output": "./assets/" },
+              { "glob": "sp500.csv", "input": "./", "output": "./assets/" }
             ],
             "styles": [
               "src/styles.css"

@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Comp2DynamicDrawItemComponent } from './comp2-dynamic-draw-item/comp2-dynamic-draw-item.component';
 import { Comp3DoughnutChartComponent } from './comp3-doughnut-chart/comp3-doughnut-chart.component';
 import { Comp4TimeSeriesLineChartComponent } from './comp4-time-series-line-chart/comp4-time-series-line-chart.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { Comp4TimeSeriesLineChartComponent } from './comp4-time-series-line-char
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     BrowserAnimationsModule
   ],
   providers: [],
