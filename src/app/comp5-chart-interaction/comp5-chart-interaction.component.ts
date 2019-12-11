@@ -38,11 +38,45 @@ function dashboard(id, fData) {
   let current;
   let hGUpdate;
   let bars;
+  let legendN;
+  let pie;
+  let arc;
+  let piesvg;
 
   function segColor(c) { return { low: '#807dba', mid: '#e08214', high: '#41ab5d' }[c]; }
 
   // compute total for each state.
   fData.forEach((d) => d.total = d.freq.low + d.freq.mid + d.freq.high);
+
+  function getLegend(d, aD) { // Utility function to compute percentage.
+    return d3.format('%')(d.freq / d3.sum(aD.map((v) => v.freq)));
+  }
+
+  // Utility function to be used to update the legend.
+  function legUpdate(nD: any) {
+    // update the data attached to the row elements.
+    const l = legendN.select('tbody').selectAll('tr').data(nD);
+
+    // update the frequencies.
+    l.select('.legendFreq').text((d) => d3.format(',')(d.freq));
+
+    // update the percentage column.
+    l.select('.legendPerc').text((d) => getLegend(d, nD));
+    return {};
+  }
+
+  // Animating the pie-slice requiring a custom function which specifies
+  // how the intermediate paths should be drawn.
+  function arcTween(a) {
+    const i = d3.interpolate(current, a);
+    current = i(0);
+    return (t) => arc(i(t));
+  }
+
+  // create function to update pie-chart. This will be used by histogram.
+  function pCUpdate(nD) {
+    return piesvg.selectAll('path').data(pie(nD)).transition().duration(500).attrTween('d', arcTween);
+  }
 
   // function to handle histogram.
   function histoGram(fD) {
@@ -94,17 +128,17 @@ function dashboard(id, fData) {
       // filter for selected state.
       const st = fData.filter((s) => s.State === d[0])[0];
       // todo to needful
-      const nD = d3.keys(st.freq).map((s) => { return { type: s, freq: st.freq[s] };});
+      const nD = d3.keys(st.freq).map((s) => ({ type: s, freq: st.freq[s] }));
 
       // call update functions of pie-chart and legend
-      pC = nD;
-      leg = nD;
+      pC = pCUpdate(nD);
+      leg = legUpdate(nD);
     }
 
     function mouseout(d) {    // utility function to be called on mouseout.
       // reset the pie-chart and legend
-      pC = this.tF;
-      leg = this.tF;
+      pC = pCUpdate(tF);
+      leg = legUpdate(tF);
     }
 
     // create function to update the bars. This will be used by pie-chart.
@@ -113,7 +147,7 @@ function dashboard(id, fData) {
       y.domain([0, d3.max(nD, (d) => d[1])]);
 
       // Attach the new data to the bars.
-       bars = hGsvg.selectAll('.bar').data(nD);
+      bars = hGsvg.selectAll('.bar').data(nD);
 
       // transition the height and color of rectangles.
       bars.select('rect').transition().duration(500)
@@ -135,27 +169,21 @@ function dashboard(id, fData) {
     const pieDimR = Math.min(pieDim.w, pieDim.h) / 2;
 
     // create svg for pie chart.
-    const piesvg = d3.select(id).append('svg')
+    piesvg = d3.select(id).append('svg')
       .attr('width', pieDim.w).attr('height', pieDim.h).append('g')
       .attr('transform', 'translate(' + pieDim.w / 2 + ',' + pieDim.h / 2 + ')');
 
     // create function to draw the arcs of the pie slices.
-    const arc = d3.arc().outerRadius(pieDimR - 10).innerRadius(0);
+    arc = d3.arc().outerRadius(pieDimR - 10).innerRadius(0);
 
     // create a function to compute the pie slice angles.
-    const pie = d3.pie().sort(null).value((d) => d.freq);
+    pie = d3.pie().sort(null).value((d) => d.freq);
 
     // Draw the pie slices.
     piesvg.selectAll('path').data(pie(pD)).enter().append('path').attr('d', arc)
       .each((d) => { current = d; })
       .style('fill', (d) => segColor(d.data.type))
       .on('mouseover', mouseover).on('mouseout', mouseout);
-
-    // create function to update pie-chart. This will be used by histogram.
-    const pCUpdate = (nD) => {
-      piesvg.selectAll('path').data(pie(nD)).transition().duration(500)
-        .attrTween('d', arcTween);
-    };
 
     // Utility function to be called on mouseover a pie slice.
     function mouseover(d) {
@@ -173,13 +201,6 @@ function dashboard(id, fData) {
       }), barColor);
     }
 
-    // Animating the pie-slice requiring a custom function which specifies
-    // how the intermediate paths should be drawn.
-    function arcTween(a) {
-      const i = d3.interpolate(current, a);
-      current = i(0);
-      return (t) => arc(i(t));
-    }
 
     return pC;
   }
@@ -188,10 +209,10 @@ function dashboard(id, fData) {
   function legend(lD) {
 
     // create table for legend.
-    this.legend = d3.select(id).append('table').attr('class', 'legend');
+    legendN = d3.select(id).append('table').attr('class', 'legend');
 
     // create one row per segment.
-    const tr = this.legend.append('tbody').selectAll('tr').data(lD).enter().append('tr');
+    const tr = legendN.append('tbody').selectAll('tr').data(lD).enter().append('tr');
 
     // create the first column for each segment.
     tr.append('td').append('svg').attr('width', '16').attr('height', '16').append('rect')
@@ -208,22 +229,6 @@ function dashboard(id, fData) {
     // create the fourth column for each segment.
     tr.append('td').attr('class', 'legendPerc')
       .text((d) => getLegend(d, lD));
-
-    // Utility function to be used to update the legend.
-    const legUpdate = (nD) => {
-      // update the data attached to the row elements.
-      const l = this.legend.select('tbody').selectAll('tr').data(nD);
-
-      // update the frequencies.
-      l.select('.legendFreq').text((d) => d3.format(',')(d.freq));
-
-      // update the percentage column.
-      l.select('.legendPerc').text((d) => getLegend(d, nD));
-    };
-
-    function getLegend(d, aD) { // Utility function to compute percentage.
-      return d3.format('%')(d.freq / d3.sum(aD.map((v) => v.freq)));
-    }
 
     return leg;
   }
