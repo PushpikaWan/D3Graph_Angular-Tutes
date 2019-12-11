@@ -9,6 +9,7 @@ import { Comp2DynamicDrawItemComponent } from './comp2-dynamic-draw-item/comp2-d
 import { Comp3DoughnutChartComponent } from './comp3-doughnut-chart/comp3-doughnut-chart.component';
 import { Comp4TimeSeriesLineChartComponent } from './comp4-time-series-line-chart/comp4-time-series-line-chart.component';
 import { HttpClientModule } from '@angular/common/http';
+import { Comp5ChartInteractionComponent } from './comp5-chart-interaction/comp5-chart-interaction.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { HttpClientModule } from '@angular/common/http';
     Comp1RedDotComponent,
     Comp2DynamicDrawItemComponent,
     Comp3DoughnutChartComponent,
-    Comp4TimeSeriesLineChartComponent
+    Comp4TimeSeriesLineChartComponent,
+    Comp5ChartInteractionComponent
   ],
   imports: [
     BrowserModule,
